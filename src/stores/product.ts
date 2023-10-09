@@ -14,6 +14,7 @@ const api = 'https://fakestoreapi.com/products'
 export const useProductStore = defineStore('product', () => {
   const products = ref<IProduct[]>([])
   const product = ref<IProduct>()
+  const categories = ref<string[]>([])
   const loading = ref(false)
 
   async function fetchProducts() {
@@ -29,13 +30,34 @@ export const useProductStore = defineStore('product', () => {
     loading.value = false
   }
 
-  async function getProduct(productId: string | string[]) {
+  async function fetchProduct(productId: string | string[]) {
     loading.value = true
     const res = await fetch(`${api}/${productId}`)
-    const data = (await res.json()) as IProduct
-    product.value = data
-    loading.value = false
+    const json = await res.json()
+    return json as IProduct
   }
 
-  return { products, product, loading, getProducts, getProduct }
+  async function getCategories() {
+    const res = await fetch('https://fakestoreapi.com/products/categories')
+    const data = await res.json()
+    categories.value = data
+  }
+
+  async function fetchProductsByCategory(categoryName: string | null) {
+    loading.value = true
+    const res = await fetch(`${api}/category/${categoryName}`)
+    const json = await res.json()
+    return json as IProduct[]
+  }
+
+  return {
+    products,
+    product,
+    loading,
+    getProducts,
+    fetchProduct,
+    fetchProductsByCategory,
+    getCategories,
+    categories
+  }
 })

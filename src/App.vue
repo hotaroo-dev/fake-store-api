@@ -1,42 +1,15 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref } from 'vue'
 import { useCartStore } from '@/stores/cart'
 import ProductCart from '@/components/ProductCart.vue'
 import CartIcon from '@/components/icons/CartIcon.vue'
-import debounce from './utils/debounce'
 
-const router = useRouter()
 const cartStore = useCartStore()
-const isCartOpen = ref(true)
-
-router.beforeEach(() => {
-  if (isCartOpen.value) {
-    isCartOpen.value = false
-  }
-})
+const isCartOpen = ref(false)
 
 function handleToggleCartVisibility() {
   isCartOpen.value = !isCartOpen.value
 }
-
-function handleSwitchCartView() {
-  if (window.innerWidth >= 1024) {
-    isCartOpen.value = true
-  } else {
-    isCartOpen.value = false
-  }
-}
-
-handleSwitchCartView()
-
-onMounted(() => {
-  window.addEventListener('resize', debounce(handleSwitchCartView, 250))
-})
-
-onUnmounted(() => {
-  window.removeEventListener('resize', debounce(handleSwitchCartView, 250))
-})
 </script>
 
 <template>
@@ -49,7 +22,7 @@ onUnmounted(() => {
           </li>
         </ul>
       </nav>
-      <button class="relative text-2xl xl:hidden" @click="handleToggleCartVisibility">
+      <button class="relative text-2xl" @click="handleToggleCartVisibility">
         <CartIcon />
         <Transition name="fade">
           <span
@@ -61,9 +34,8 @@ onUnmounted(() => {
       </button>
     </div>
   </header>
-
   <main class="container grid grid-cols-1 gap-10 py-10 md:grid-cols-3 xl:grid-cols-4">
-    <RouterView />
+    <RouterView :key="$route.fullPath" />
     <ProductCart :isCartOpen="isCartOpen" />
   </main>
 </template>
