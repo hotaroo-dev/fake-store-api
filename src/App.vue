@@ -3,29 +3,24 @@ import { onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCartStore } from '@/stores/cart'
 import ProductCart from '@/components/ProductCart.vue'
-import Cart from '@/components/icons/Cart.vue'
+import CartIcon from '@/components/icons/CartIcon.vue'
+import debounce from './utils/debounce'
 
 const router = useRouter()
-const store = useCartStore()
+const cartStore = useCartStore()
 const isCartOpen = ref(true)
 
 router.beforeEach(() => {
-  handleCart()
+  if (isCartOpen.value) {
+    isCartOpen.value = false
+  }
 })
 
-function debounce(fn: () => void, delay: number) {
-  let timer: any = null
-  return () => {
-    clearTimeout(timer)
-    timer = setTimeout(fn, delay)
-  }
-}
-
-function toggleCart() {
+function handleToggleCartVisibility() {
   isCartOpen.value = !isCartOpen.value
 }
 
-function handleCart() {
+function handleSwitchCartView() {
   if (window.innerWidth >= 1024) {
     isCartOpen.value = true
   } else {
@@ -33,14 +28,14 @@ function handleCart() {
   }
 }
 
-handleCart()
+handleSwitchCartView()
 
 onMounted(() => {
-  window.addEventListener('resize', debounce(handleCart, 250))
+  window.addEventListener('resize', debounce(handleSwitchCartView, 250))
 })
 
 onUnmounted(() => {
-  window.removeEventListener('resize', debounce(handleCart, 250))
+  window.removeEventListener('resize', debounce(handleSwitchCartView, 250))
 })
 </script>
 
@@ -54,13 +49,13 @@ onUnmounted(() => {
           </li>
         </ul>
       </nav>
-      <button class="relative text-2xl xl:hidden" @click="toggleCart">
-        <Cart />
+      <button class="relative text-2xl xl:hidden" @click="handleToggleCartVisibility">
+        <CartIcon />
         <Transition name="fade">
           <span
-            v-if="store.count"
+            v-if="cartStore.totalItemsCount"
             class="absolute top-1/2 h-4 w-4 rounded-full bg-red-400 text-xs leading-tight"
-            >{{ store.count }}</span
+            >{{ cartStore.totalItemsCount }}</span
           >
         </Transition>
       </button>

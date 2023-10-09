@@ -2,26 +2,26 @@
 import { onBeforeMount } from 'vue'
 import { useProductStore } from '@/stores/product'
 import ProductCard from '@/components/ProductCard.vue'
-import Spinner from '@/components/icons/Spinner.vue'
+import SpinnerIcon from '@/components/icons/SpinnerIcon.vue'
 
-const store = useProductStore()
+const productStore = useProductStore()
 
 onBeforeMount(() => {
-  !store.products.length && store.getProducts()
+  !productStore.products.length && productStore.getProducts()
 })
 </script>
 
 <template>
   <div class="col-span-1 md:col-span-3">
-    <div v-if="store.loading" class="mt-20 flex justify-center text-blue-500">
-      <Spinner />
+    <div v-if="productStore.loading" class="mt-20 flex justify-center text-blue-500">
+      <SpinnerIcon />
     </div>
     <template v-else>
       <div
-        v-if="store.products.length"
+        v-if="productStore.products.length"
         class="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3"
       >
-        <div v-for="product in store.products" :key="product.id">
+        <div v-for="product in productStore.products" :key="product.id">
           <ProductCard :product="product" />
         </div>
       </div>

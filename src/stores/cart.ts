@@ -7,44 +7,44 @@ interface ICart {
   count: number
 }
 
-export const useCartStore = defineStore('carts', () => {
-  const carts = ref<ICart[]>([])
-  const count = computed(() => carts.value.reduce((acc, { count }) => acc + count, 0))
-  const total = computed(() =>
-    carts.value.reduce((acc, { count, product: { price } }) => acc + count * price, 0).toFixed(2)
+export const useCartStore = defineStore('cart', () => {
+  const cart = ref<ICart[]>([])
+  const totalItemsCount = computed(() => cart.value.reduce((acc, { count }) => acc + count, 0))
+  const totalPrice = computed(() =>
+    cart.value.reduce((acc, { count, product: { price } }) => acc + count * price, 0).toFixed(2)
   )
 
-  watch(carts, (newCarts) => {
+  watch(cart, (newCarts) => {
     for (const deleteCart of newCarts.filter((cart) => cart.count === 0)) {
-      const index = carts.value.findIndex((cart) => cart.product.id === deleteCart.product.id)
-      carts.value.splice(index, 1)
+      const index = cart.value.findIndex((cart) => cart.product.id === deleteCart.product.id)
+      cart.value.splice(index, 1)
     }
   })
 
-  function contains(id: number) {
-    return carts.value.some((cart) => cart.product.id === id)
+  function isItemInCart(id: number) {
+    return cart.value.some((cart) => cart.product.id === id)
   }
 
   function addToCart(product: IProduct) {
-    if (contains(product.id)) {
-      carts.value = carts.value.map((cart) =>
+    if (isItemInCart(product.id)) {
+      cart.value = cart.value.map((cart) =>
         cart.product.id === product.id ? { ...cart, count: cart.count + 1 } : cart
       )
     } else {
-      carts.value.push({ product, count: 1 })
+      cart.value.push({ product, count: 1 })
     }
   }
 
-  function deleteCart(id: number) {
-    carts.value = carts.value.filter((cart) => cart.product.id !== id)
+  function deleteCartItem(id: number) {
+    cart.value = cart.value.filter((cart) => cart.product.id !== id)
   }
 
-  function decreaseCount(id: number) {
-    if (!contains(id)) return
-    carts.value = carts.value.map((cart) =>
+  function decreaseItemQuantity(id: number) {
+    if (!isItemInCart(id)) return
+    cart.value = cart.value.map((cart) =>
       cart.product.id === id ? { ...cart, count: cart.count - 1 } : cart
     )
   }
 
-  return { carts, count, total, addToCart, deleteCart, decreaseCount }
+  return { cart, totalItemsCount, totalPrice, addToCart, deleteCartItem, decreaseItemQuantity }
 })

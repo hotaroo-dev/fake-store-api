@@ -2,11 +2,11 @@
 import { useCartStore } from '@/stores/cart'
 import type { IProduct } from '@/stores/product'
 
-withDefaults(defineProps<{ product: IProduct; shop?: boolean }>(), {
-  shop: false
+withDefaults(defineProps<{ product: IProduct; allowQuantityChange?: boolean }>(), {
+  allowQuantityChange: true
 })
 
-const { addToCart, decreaseCount } = useCartStore()
+const { addToCart, decreaseItemQuantity } = useCartStore()
 </script>
 
 <template>
@@ -27,15 +27,15 @@ const { addToCart, decreaseCount } = useCartStore()
       <div class="flex gap-6">
         <button
           class="btn mr-auto flex-1"
-          :class="{ 'max-w-[16rem]': shop }"
+          :class="{ 'max-w-[16rem]': !allowQuantityChange }"
           @click="addToCart(product)"
         >
           Add to Cart
         </button>
-        <template v-if="!shop">
+        <template v-if="allowQuantityChange">
           <div class="flex gap-3">
             <button class="btn" @click="addToCart(product)">+</button>
-            <button class="btn decrease" @click="decreaseCount(product.id)">-</button>
+            <button class="btn decrease" @click="decreaseItemQuantity(product.id)">-</button>
           </div>
         </template>
       </div>

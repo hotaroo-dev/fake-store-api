@@ -9,6 +9,8 @@ export interface IProduct {
   image: string
 }
 
+const api = 'https://fakestoreapi.com/products'
+
 export const useProductStore = defineStore('product', () => {
   const products = ref<IProduct[]>([])
   const product = ref<IProduct>()
@@ -16,7 +18,7 @@ export const useProductStore = defineStore('product', () => {
 
   async function fetchProducts() {
     loading.value = true
-    const res = await fetch('https://fakestoreapi.com/products')
+    const res = await fetch(api)
     const json = await res.json()
     return json as IProduct[]
   }
@@ -27,8 +29,12 @@ export const useProductStore = defineStore('product', () => {
     loading.value = false
   }
 
-  function getProduct(productId: string | string[]) {
-    product.value = products.value.find((product) => product.id === +productId)
+  async function getProduct(productId: string | string[]) {
+    loading.value = true
+    const res = await fetch(`${api}/${productId}`)
+    const data = (await res.json()) as IProduct
+    product.value = data
+    loading.value = false
   }
 
   return { products, product, loading, getProducts, getProduct }
