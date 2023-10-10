@@ -1,8 +1,13 @@
 <script setup lang="ts">
+import { onBeforeMount } from 'vue'
 import { useCartStore } from '@/stores/cart'
 import ProductCard from '@/components/ProductCard.vue'
 
 const cartStore = useCartStore()
+
+onBeforeMount(() => {
+  cartStore.isCartOpen = true
+})
 </script>
 
 <template>

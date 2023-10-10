@@ -9,7 +9,7 @@ import ArrowRightIcon from './icons/ArrowRightIcon.vue'
 
 const props = defineProps<{ products: IProduct[]; loading: boolean }>()
 
-const offset = 3
+const offset = 6
 const productStore = useProductStore()
 const filterdProducts = ref<IProduct[]>()
 const route = useRoute()
@@ -39,12 +39,8 @@ watch(
     <template v-else>
       <div
         v-if="filterdProducts?.length"
-        class="relative grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3"
+        class="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3"
       >
-        <span
-          class="absolute -right-16 -top-4 flex h-10 w-10 items-center justify-center rounded-full bg-blue-100 text-blue-700"
-          >{{ filterdProducts.length }}</span
-        >
         <div
           v-for="product in filterdProducts.slice(startIdx, startIdx + offset)"
           :key="product.id"
@@ -65,7 +61,7 @@ watch(
             :to="`${route.path}?page=${page}`"
             v-for="page in pages"
             :key="page"
-            class="flex h-10 items-center justify-center rounded bg-transparent px-4 text-blue-800"
+            class="flex h-10 items-center justify-center rounded px-4 font-bold text-blue-800"
             :class="{ 'bg-blue-100': page === currentPage }"
           >
             <span>{{ page }}</span>

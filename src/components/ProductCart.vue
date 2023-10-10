@@ -2,9 +2,7 @@
 import gsap from 'gsap'
 import { useCartStore } from '@/stores/cart'
 
-defineProps<{ isCartOpen: boolean }>()
-
-const store = useCartStore()
+const cartStore = useCartStore()
 
 function onBeforeEnter(el: Element, height = 0) {
   ;(el as HTMLElement).style.opacity = '0'
@@ -31,7 +29,7 @@ function onLeave(el: Element, done: () => void, height = 0) {
 <template>
   <Transition name="slide-fade">
     <div
-      v-if="isCartOpen"
+      v-if="cartStore.isCartOpen"
       class="container pointer-events-none fixed top-16 flex h-min justify-end xl:top-24"
     >
       <div
@@ -47,7 +45,7 @@ function onLeave(el: Element, done: () => void, height = 0) {
           @leave="(el, done) => onLeave(el, done, 41)"
           mode="out-in"
         >
-          <div v-if="store.cart.length === 0" class="border-b border-zinc-200 pb-4 pl-4">
+          <div v-if="cartStore.cart.length === 0" class="border-b border-zinc-200 pb-4 pl-4">
             <p>Your Cart is empty</p>
           </div>
           <TransitionGroup
@@ -58,7 +56,7 @@ function onLeave(el: Element, done: () => void, height = 0) {
             @enter="onEnter"
             @leave="onLeave"
           >
-            <div v-for="cartItem in store.cart" :key="cartItem.product.id">
+            <div v-for="cartItem in cartStore.cart" :key="cartItem.product.id">
               <div class="flex justify-between border-b border-zinc-200 p-4">
                 <p class="w-9/12 overflow-hidden overflow-ellipsis whitespace-nowrap">
                   {{ cartItem.product.title }}
@@ -76,7 +74,7 @@ function onLeave(el: Element, done: () => void, height = 0) {
         <div class="flex flex-col gap-4 py-4">
           <div class="flex justify-between border-b px-4 pb-4">
             <span>Price</span>
-            <span class="font-bold">${{ store.totalPrice }}</span>
+            <span class="font-bold">${{ cartStore.totalPrice }}</span>
           </div>
           <div class="flex-1 px-4">
             <RouterLink

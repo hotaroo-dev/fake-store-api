@@ -1,19 +1,19 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useCartStore } from '@/stores/cart'
 import ProductCart from '@/components/ProductCart.vue'
 import CartIcon from '@/components/icons/CartIcon.vue'
 
 const cartStore = useCartStore()
-const isCartOpen = ref(false)
+const router = useRouter()
 
-function handleToggleCartVisibility() {
-  isCartOpen.value = !isCartOpen.value
-}
+router.beforeEach(() => {
+  cartStore.isCartOpen = false
+})
 </script>
 
 <template>
-  <header class="sticky top-0 z-10 bg-stone-900 py-4 text-white">
+  <header class="sticky top-0 bg-stone-900 py-4 text-white">
     <div class="container flex items-center justify-between">
       <nav>
         <ul class="flex items-center gap-8">
@@ -25,7 +25,7 @@ function handleToggleCartVisibility() {
           </li>
         </ul>
       </nav>
-      <button class="relative text-2xl" @click="handleToggleCartVisibility">
+      <button class="relative text-2xl" @click="cartStore.toggleCartVisibility">
         <CartIcon />
         <Transition name="fade">
           <span
@@ -39,7 +39,7 @@ function handleToggleCartVisibility() {
   </header>
   <main class="container grid grid-cols-1 gap-10 py-10 md:grid-cols-3 xl:grid-cols-4">
     <RouterView :key="$route.fullPath" />
-    <ProductCart :isCartOpen="isCartOpen" />
+    <ProductCart />
   </main>
 </template>
 

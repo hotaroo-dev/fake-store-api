@@ -9,10 +9,15 @@ interface ICart {
 
 export const useCartStore = defineStore('cart', () => {
   const cart = ref<ICart[]>([])
+  const isCartOpen = ref(false)
   const totalItemsCount = computed(() => cart.value.reduce((acc, { count }) => acc + count, 0))
   const totalPrice = computed(() =>
     cart.value.reduce((acc, { count, product: { price } }) => acc + count * price, 0).toFixed(2)
   )
+
+  function toggleCartVisibility() {
+    isCartOpen.value = !isCartOpen.value
+  }
 
   function isItemInCart(id: number) {
     return cart.value.some((cartItem) => cartItem.product.id === id)
@@ -41,5 +46,14 @@ export const useCartStore = defineStore('cart', () => {
     idx !== -1 && cart.value.splice(idx, 1)
   }
 
-  return { cart, totalItemsCount, totalPrice, addToCart, deleteCartItem, decreaseItemQuantity }
+  return {
+    cart,
+    isCartOpen,
+    totalItemsCount,
+    totalPrice,
+    toggleCartVisibility,
+    addToCart,
+    deleteCartItem,
+    decreaseItemQuantity
+  }
 })

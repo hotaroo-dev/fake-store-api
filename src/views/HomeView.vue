@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { onBeforeMount } from 'vue'
+import { useCartStore } from '@/stores/cart'
 import { useProductStore } from '@/stores/product'
 import ProductCard from '@/components/ProductCard.vue'
 import SpinnerIcon from '@/components/icons/SpinnerIcon.vue'
 
+const cartStore = useCartStore()
 const productStore = useProductStore()
 
 onBeforeMount(() => {
+  cartStore.isCartOpen = true
   !productStore.products.length && productStore.getProducts()
 })
 </script>

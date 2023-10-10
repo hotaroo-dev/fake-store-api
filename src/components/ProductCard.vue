@@ -10,9 +10,9 @@ const { addToCart, decreaseItemQuantity } = useCartStore()
 </script>
 
 <template>
-  <div class="rounded border border-zinc-200">
+  <div class="rounded border border-zinc-200 shadow-sm">
     <RouterLink :to="`/products/${product.id}`">
-      <img class="aspect-[4/3] w-full object-contain p-4" :src="product.image" />
+      <img class="aspect-[2/1] w-full object-contain p-4" :src="product.image" />
     </RouterLink>
     <div class="flex flex-col gap-3 p-4">
       <h2 class="w-9/12 overflow-hidden overflow-ellipsis whitespace-nowrap">

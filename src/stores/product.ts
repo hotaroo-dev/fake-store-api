@@ -9,11 +9,15 @@ export interface IProduct {
   image: string
 }
 
+interface IProductByCategory {
+  [key: string]: IProduct[]
+}
+
 const api = 'https://fakestoreapi.com/products'
 
 export const useProductStore = defineStore('product', () => {
   const products = ref<IProduct[]>([])
-  const productsByCategory = ref<IProduct[]>([])
+  const productsByCategory = ref<IProductByCategory>({})
   const product = ref<IProduct>()
   const categories = ref<string[]>([])
   const priceRange = ref([0, 1000])
@@ -40,23 +44,37 @@ export const useProductStore = defineStore('product', () => {
   }
 
   async function getCategories() {
-    const res = await fetch('https://fakestoreapi.com/products/categories')
+    const res = await fetch(`${api}/categories`)
     const data = await res.json()
     categories.value = data
   }
 
-  async function fetchProductsByCategory(categoryName: string | string[]) {
+  async function getProductsByCategory() {
     loading.value = true
-    const res = await fetch(`${api}/category/${categoryName}`)
-    const json = await res.json()
-    return json as IProduct[]
-  }
-
-  async function getProdutsByCategory(categoryName: string | string[]) {
-    const data = await fetchProductsByCategory(categoryName)
-    productsByCategory.value = data
+    !categories.value.length && (await getCategories())
+    const data = await Promise.all(
+      categories.value.map((categoryName) =>
+        fetch(`${api}/category/${categoryName}`).then((res) => res.json())
+      )
+    )
+    for (const [idx, category] of categories.value.entries()) {
+      productsByCategory.value[category] = data[idx]
+    }
     loading.value = false
   }
+
+  // async function fetchProductsByCategory(categoryName: string | string[]) {
+  //   loading.value = true
+  //   const res = await fetch(`${api}/category/${categoryName}`)
+  //   const json = await res.json()
+  //   return json as IProduct[]
+  // }
+  //
+  // async function getProdutsByCategory(categoryName: string | string[]) {
+  //   const data = await fetchProductsByCategory(categoryName)
+  //   productsByCategory.value = data
+  //   loading.value = false
+  // }
 
   return {
     products,
@@ -66,7 +84,7 @@ export const useProductStore = defineStore('product', () => {
     categories,
     priceRange,
     getProducts,
-    getProdutsByCategory,
+    getProductsByCategory,
     getCategories,
     fetchProduct
   }

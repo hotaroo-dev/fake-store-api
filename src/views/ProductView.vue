@@ -5,13 +5,14 @@ import { useCartStore } from '@/stores/cart'
 import { useProductStore, type IProduct } from '@/stores/product'
 import SpinnerIcon from '@/components/icons/SpinnerIcon.vue'
 
-const { addToCart } = useCartStore()
+const cartStore = useCartStore()
 const productStore = useProductStore()
 const product = ref<IProduct>()
 
 const route = useRoute()
 
 onBeforeMount(async () => {
+  cartStore.isCartOpen = true
   product.value = await productStore.fetchProduct(route.params.productId)
   productStore.loading = false
 })
@@ -28,7 +29,7 @@ onBeforeMount(async () => {
         <h2>{{ product?.title }}</h2>
         <p class="text-zinc-600">{{ product.description }}</p>
         <div class="flex items-center justify-between">
-          <button class="btn" @click="addToCart(product)">Add to Cart</button>
+          <button class="btn" @click="cartStore.addToCart(product)">Add to Cart</button>
           <p class="font-bold">${{ product.price }}</p>
         </div>
       </div>

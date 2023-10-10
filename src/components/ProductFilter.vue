@@ -18,17 +18,22 @@ onBeforeMount(() => {
         <template #header>Categories</template>
         <template #content>
           <ul v-if="productStore.categories.length" class="space-y-0.5 font-semibold text-zinc-500">
-            <li v-for="category in productStore.categories" :key="category" class="cursor-pointer">
+            <li
+              v-for="category in productStore.categories"
+              :key="category"
+              class="cursor-pointer"
+              :class="{ 'text-blue-500': category === $route.params.categoryName }"
+            >
               <RouterLink :to="`/products/category/${category}`">
                 {{ category }}
               </RouterLink>
             </li>
           </ul>
-          <div v-else class="space-y-1.5">
+          <div v-else class="space-y-2">
             <div
               v-for="num in 4"
               :key="num"
-              class="h-6 w-full animate-pulse rounded-sm bg-zinc-200"
+              class="h-5 w-full animate-pulse rounded-sm bg-zinc-200"
             ></div>
           </div>
         </template>
@@ -53,7 +58,7 @@ onBeforeMount(() => {
           <Slider
             v-model="productStore.priceRange"
             class="slider-blue"
-            @change="$router.push(`${$route.path}?page=1`)"
+            @change="$router.push($route.path)"
             :tooltips="false"
             :min="0"
             :max="1000"
