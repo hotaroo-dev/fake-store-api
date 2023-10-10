@@ -13,12 +13,15 @@ function handleToggleCartVisibility() {
 </script>
 
 <template>
-  <header class="sticky top-0 bg-stone-900 py-4 text-white">
+  <header class="sticky top-0 z-10 bg-stone-900 py-4 text-white">
     <div class="container flex items-center justify-between">
       <nav>
-        <ul class="flex gap-4">
+        <ul class="flex items-center gap-8">
           <li>
             <RouterLink to="/"><span class="font-bold">The Identity Store</span></RouterLink>
+          </li>
+          <li>
+            <RouterLink to="/products"><span class="text-sm">Products</span></RouterLink>
           </li>
         </ul>
       </nav>

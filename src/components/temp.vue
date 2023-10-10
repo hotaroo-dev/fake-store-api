@@ -36,20 +36,20 @@ onBeforeMount(() => {
           <ProductCard :product="product" />
         </div>
       </div>
-      <div class="mt-4 flex justify-end gap-4">
-        <RouterLink
-          class="block rounded bg-red-500 px-4 py-2 text-center text-white active:translate-y-0.5"
-          :to="`products?page=${page - 1 < 0 ? 0 : page - 1}`"
-        >
-          prev
-        </RouterLink>
-        <RouterLink
-          class="block rounded bg-blue-500 px-4 py-2 text-center text-white active:translate-y-0.5"
-          :to="`/products?page=${offset * (page + 1) > filteredProducts.length ? page : page + 1}`"
-        >
-          next
-        </RouterLink>
-      </div>
+      <!-- <div class="mt-4 flex justify-end gap-4"> -->
+      <!--   <RouterLink -->
+      <!--     class="block rounded bg-red-500 px-4 py-2 text-center text-white active:translate-y-0.5" -->
+      <!--     :to="`products?page=${page - 1 < 0 ? 0 : page - 1}`" -->
+      <!--   > -->
+      <!--     prev -->
+      <!--   </RouterLink> -->
+      <!--   <RouterLink -->
+      <!--     class="block rounded bg-blue-500 px-4 py-2 text-center text-white active:translate-y-0.5" -->
+      <!--     :to="`/products?page=${offset * (page + 1) > filteredProducts.length ? page : page + 1}`" -->
+      <!--   > -->
+      <!--     next -->
+      <!--   </RouterLink> -->
+      <!-- </div> -->
     </template>
   </div>
 </template>

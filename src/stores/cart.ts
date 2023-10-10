@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import type { IProduct } from './product'
 
 interface ICart {
@@ -14,21 +14,14 @@ export const useCartStore = defineStore('cart', () => {
     cart.value.reduce((acc, { count, product: { price } }) => acc + count * price, 0).toFixed(2)
   )
 
-  watch(cart, (newCarts) => {
-    for (const deleteCart of newCarts.filter((cart) => cart.count === 0)) {
-      const index = cart.value.findIndex((cart) => cart.product.id === deleteCart.product.id)
-      cart.value.splice(index, 1)
-    }
-  })
-
   function isItemInCart(id: number) {
-    return cart.value.some((cart) => cart.product.id === id)
+    return cart.value.some((cartItem) => cartItem.product.id === id)
   }
 
   function addToCart(product: IProduct) {
     if (isItemInCart(product.id)) {
-      cart.value = cart.value.map((cart) =>
-        cart.product.id === product.id ? { ...cart, count: cart.count + 1 } : cart
+      cart.value = cart.value.map((cartItem) =>
+        cartItem.product.id === product.id ? { ...cartItem, count: cartItem.count + 1 } : cartItem
       )
     } else {
       cart.value.push({ product, count: 1 })
@@ -36,14 +29,16 @@ export const useCartStore = defineStore('cart', () => {
   }
 
   function deleteCartItem(id: number) {
-    cart.value = cart.value.filter((cart) => cart.product.id !== id)
+    cart.value = cart.value.filter((cartItem) => cartItem.product.id !== id)
   }
 
   function decreaseItemQuantity(id: number) {
     if (!isItemInCart(id)) return
-    cart.value = cart.value.map((cart) =>
-      cart.product.id === id ? { ...cart, count: cart.count - 1 } : cart
+    cart.value = cart.value.map((cartItem) =>
+      cartItem.product.id === id ? { ...cartItem, count: cartItem.count - 1 } : cartItem
     )
+    const idx = cart.value.findIndex((cartItem) => cartItem.count === 0)
+    idx !== -1 && cart.value.splice(idx, 1)
   }
 
   return { cart, totalItemsCount, totalPrice, addToCart, deleteCartItem, decreaseItemQuantity }

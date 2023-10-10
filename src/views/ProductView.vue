@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { useProductStore, type IProduct } from '@/stores/product'
 import { useCartStore } from '@/stores/cart'
+import { useProductStore, type IProduct } from '@/stores/product'
 import SpinnerIcon from '@/components/icons/SpinnerIcon.vue'
 
-const product = ref<IProduct>()
-const productStore = useProductStore()
 const { addToCart } = useCartStore()
+const productStore = useProductStore()
+const product = ref<IProduct>()
 
 const route = useRoute()
 

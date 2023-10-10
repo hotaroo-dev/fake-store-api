@@ -6,9 +6,9 @@ defineProps<{ isCartOpen: boolean }>()
 
 const store = useCartStore()
 
-function onBeforeEnter(el: Element) {
+function onBeforeEnter(el: Element, height = 0) {
   ;(el as HTMLElement).style.opacity = '0'
-  ;(el as HTMLElement).style.height = '0'
+  ;(el as HTMLElement).style.height = `${height}px`
 }
 
 function onEnter(el: Element, done: () => void) {
@@ -19,10 +19,10 @@ function onEnter(el: Element, done: () => void) {
   })
 }
 
-function onLeave(el: Element, done: () => void) {
+function onLeave(el: Element, done: () => void, height = 0) {
   gsap.to(el, {
     opacity: 0,
-    height: 0,
+    height,
     onComplete: done
   })
 }
@@ -34,16 +34,25 @@ function onLeave(el: Element, done: () => void) {
       v-if="isCartOpen"
       class="container pointer-events-none fixed top-16 flex h-min justify-end xl:top-24"
     >
-      <div class="pointer-events-auto w-full max-w-sm rounded border border-zinc-200 bg-white">
-        <div class="border-b border-zinc-200 p-4">
-          <h1 class="mb-4 font-bold">Your Cart</h1>
-          <div v-if="store.cart.length === 0">
-            <p>Your Cart is empty</p>
-          </div>
+      <div
+        class="pointer-events-auto mr-8 w-full max-w-[22rem] rounded border border-zinc-200 bg-white"
+      >
+        <div class="p-4">
+          <h1 class="font-bold">Your Cart</h1>
         </div>
 
-        <div v-if="store.cart.length">
+        <Transition
+          @before-enter="(el) => onBeforeEnter(el, 41)"
+          @enter="onEnter"
+          @leave="(el, done) => onLeave(el, done, 41)"
+          mode="out-in"
+        >
+          <div v-if="store.cart.length === 0" class="border-b border-zinc-200 pb-4 pl-4">
+            <p>Your Cart is empty</p>
+          </div>
           <TransitionGroup
+            v-else
+            class="border-t border-zinc-200"
             tag="div"
             @before-enter="onBeforeEnter"
             @enter="onEnter"
@@ -62,7 +71,7 @@ function onLeave(el: Element, done: () => void) {
               </div>
             </div>
           </TransitionGroup>
-        </div>
+        </Transition>
 
         <div class="flex flex-col gap-4 py-4">
           <div class="flex justify-between border-b px-4 pb-4">
@@ -92,8 +101,6 @@ function onLeave(el: Element, done: () => void) {
 .slide-fade-enter-from,
 .slide-fade-leave-to {
   opacity: 0;
-  scale: 0.99;
   transform: translateY(-10px);
-  transform-origin: top center;
 }
 </style>
