@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { useCartStore } from '@/stores/cart'
+import { useProductStore } from './stores/product'
 import ProductCart from '@/components/ProductCart.vue'
 import CartIcon from '@/components/icons/CartIcon.vue'
 
 const cartStore = useCartStore()
+const productStore = useProductStore()
 const router = useRouter()
 
 router.beforeEach(() => {
@@ -21,7 +23,17 @@ router.beforeEach(() => {
             <RouterLink to="/"><span class="font-bold">The Identity Store</span></RouterLink>
           </li>
           <li>
-            <RouterLink to="/products"><span class="text-sm">Products</span></RouterLink>
+            <RouterLink
+              :to="{
+                path: `/products`,
+                query: {
+                  ...$route.query,
+                  min: productStore.priceRange[0],
+                  max: productStore.priceRange[1]
+                }
+              }"
+              ><span class="text-sm">Products</span></RouterLink
+            >
           </li>
         </ul>
       </nav>
@@ -45,7 +57,7 @@ router.beforeEach(() => {
 
 <style>
 .btn {
-  @apply h-10 rounded bg-blue-500 px-4 text-white active:translate-y-0.5;
+  @apply active:animate-button-pop h-10 rounded bg-blue-500 px-4 text-white;
 }
 .btn.decrease {
   @apply bg-yellow-500;

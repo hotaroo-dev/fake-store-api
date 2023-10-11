@@ -1,5 +1,6 @@
-import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { defineStore } from 'pinia'
+import { useDebouncedRef } from '@/composables/useDebouncedRef'
 
 export interface IProduct {
   id: number
@@ -9,18 +10,15 @@ export interface IProduct {
   image: string
 }
 
-interface IProductByCategory {
-  [key: string]: IProduct[]
-}
-
 const api = 'https://fakestoreapi.com/products'
 
 export const useProductStore = defineStore('product', () => {
   const products = ref<IProduct[]>([])
-  const productsByCategory = ref<IProductByCategory>({})
+  const productsByCategory = ref<IProduct[]>([])
   const product = ref<IProduct>()
   const categories = ref<string[]>([])
-  const priceRange = ref([0, 1000])
+  const priceRange = ref<number[]>([10, 500])
+  const searchTerm = ref('')
   const loading = ref(false)
 
   async function fetchProducts() {
@@ -49,37 +47,24 @@ export const useProductStore = defineStore('product', () => {
     categories.value = data
   }
 
-  async function getProductsByCategory() {
+  async function fetchProductsByCategory(categoryName: string | string[]) {
     loading.value = true
-    !categories.value.length && (await getCategories())
-    const data = await Promise.all(
-      categories.value.map((categoryName) =>
-        fetch(`${api}/category/${categoryName}`).then((res) => res.json())
-      )
-    )
-    for (const [idx, category] of categories.value.entries()) {
-      productsByCategory.value[category] = data[idx]
-    }
-    loading.value = false
+    const res = await fetch(`${api}/category/${categoryName}`)
+    const json = await res.json()
+    return json as IProduct[]
   }
 
-  // async function fetchProductsByCategory(categoryName: string | string[]) {
-  //   loading.value = true
-  //   const res = await fetch(`${api}/category/${categoryName}`)
-  //   const json = await res.json()
-  //   return json as IProduct[]
-  // }
-  //
-  // async function getProdutsByCategory(categoryName: string | string[]) {
-  //   const data = await fetchProductsByCategory(categoryName)
-  //   productsByCategory.value = data
-  //   loading.value = false
-  // }
+  async function getProductsByCategory(categoryName: string | string[]) {
+    const data = await fetchProductsByCategory(categoryName)
+    productsByCategory.value = data
+    loading.value = false
+  }
 
   return {
     products,
     productsByCategory,
     product,
+    searchTerm,
     loading,
     categories,
     priceRange,

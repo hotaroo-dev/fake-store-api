@@ -11,7 +11,7 @@ const categoryName = route.params.categoryName
 
 onBeforeMount(async () => {
   if (categoryName) {
-    !Object.keys(productStore.productsByCategory).length && productStore.getProductsByCategory()
+    productStore.getProductsByCategory(categoryName)
   } else {
     !productStore.products.length && productStore.getProducts()
   }
@@ -21,11 +21,7 @@ onBeforeMount(async () => {
 <template>
   <ProductFilter />
   <ProductPagination
-    :products="
-      categoryName
-        ? productStore.productsByCategory[$route.params.categoryName as string] || []
-        : productStore.products
-    "
+    :products="categoryName ? productStore.productsByCategory : productStore.products"
     :loading="productStore.loading"
   />
 </template>

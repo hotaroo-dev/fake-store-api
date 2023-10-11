@@ -1,19 +1,53 @@
 <script setup lang="ts">
-import { onBeforeMount } from 'vue'
+import { onBeforeMount, onMounted, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { useProductStore } from '@/stores/product'
 import Slider from '@vueform/slider'
 import Card from '@/components/Card.vue'
 
 const productStore = useProductStore()
+const inputRef = ref<HTMLInputElement>()
+const router = useRouter()
+const route = useRoute()
+const min = route.query.min ? +route.query.min : 10
+const max = route.query.max ? +route.query.max : 500
+const search = route.query.search ? route.query.search.toString() : ''
 
 onBeforeMount(() => {
+  productStore.searchTerm = search
+  productStore.priceRange = [min, max]
   !productStore.categories.length && productStore.getCategories()
 })
+
+onMounted(() => {
+  inputRef.value?.focus()
+})
+
+watch(
+  () => productStore.searchTerm,
+  (newTerm) => {
+    router.push({ query: { ...route.query, search: newTerm } })
+  }
+)
+
+watch(
+  () => productStore.priceRange,
+  ([min, max]) => {
+    router.push({ query: { ...route.query, min, max } })
+  }
+)
 </script>
 
 <template>
   <div class="sticky top-24 h-min">
     <div class="flex w-full flex-col gap-6">
+      <input
+        ref="inputRef"
+        v-model="productStore.searchTerm"
+        placeholder="search..."
+        type="text"
+        class="mx-auto h-10 w-[calc(100%-8px)] rounded border border-zinc-200 px-4 shadow-sm outline outline-1 outline-offset-4 outline-zinc-200"
+      />
       <Card>
         <template #header>Categories</template>
         <template #content>
@@ -24,7 +58,9 @@ onBeforeMount(() => {
               class="cursor-pointer"
               :class="{ 'text-blue-500': category === $route.params.categoryName }"
             >
-              <RouterLink :to="`/products/category/${category}`">
+              <RouterLink
+                :to="{ path: `/products/category/${category}`, query: { ...route.query } }"
+              >
                 {{ category }}
               </RouterLink>
             </li>
@@ -43,13 +79,13 @@ onBeforeMount(() => {
         <template #content>
           <div class="mb-6 flex justify-between">
             <div class="flex flex-col items-center">
-              <span class="text-[10px] text-zinc-500">Minimun Price</span>
+              <span class="text-[10px] font-bold text-zinc-500">Minimun Price</span>
               <span class="mt-0.5 bg-slate-200 px-2 font-bold">{{
                 productStore.priceRange[0].toFixed(2)
               }}</span>
             </div>
             <div class="flex flex-col items-center">
-              <span class="text-[10px] text-zinc-500">Maximun Price</span>
+              <span class="text-[10px] font-bold text-zinc-500">Maximun Price</span>
               <span class="mt-0.5 bg-slate-200 px-2 font-bold">{{
                 productStore.priceRange[1].toFixed(2)
               }}</span>
@@ -58,7 +94,6 @@ onBeforeMount(() => {
           <Slider
             v-model="productStore.priceRange"
             class="slider-blue"
-            @change="$router.push($route.path)"
             :tooltips="false"
             :min="0"
             :max="1000"
