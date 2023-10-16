@@ -60,7 +60,7 @@ function updateSearchQuery(newTerm: string) {
               :class="{ 'text-blue-500': category === $route.params.categoryName }"
             >
               <RouterLink
-                :to="{ path: `/products/category/${category}`, query: { ...route.query } }"
+                :to="{ path: `/products/category/${category}`, query: { ...route.query, page: 1 } }"
               >
                 {{ category }}
               </RouterLink>

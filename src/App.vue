@@ -29,7 +29,8 @@ router.beforeEach(() => {
                 query: {
                   ...$route.query,
                   min: productStore.priceRange[0],
-                  max: productStore.priceRange[1]
+                  max: productStore.priceRange[1],
+                  page: 1
                 }
               }"
               ><span class="text-sm">Products</span></RouterLink
