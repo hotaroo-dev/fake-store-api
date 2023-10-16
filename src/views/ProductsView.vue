@@ -9,7 +9,7 @@ const productStore = useProductStore()
 const route = useRoute()
 const categoryName = route.params.categoryName
 
-onBeforeMount(async () => {
+onBeforeMount(() => {
   if (categoryName) {
     productStore.getProductsByCategory(categoryName)
   } else {

@@ -15,7 +15,7 @@ router.beforeEach(() => {
 </script>
 
 <template>
-  <header class="sticky top-0 bg-stone-900 py-4 text-white">
+  <header class="sticky top-0 z-10 bg-stone-900 py-4 text-white">
     <div class="container flex items-center justify-between">
       <nav>
         <ul class="flex items-center gap-8">
@@ -57,7 +57,7 @@ router.beforeEach(() => {
 
 <style>
 .btn {
-  @apply active:animate-button-pop h-10 rounded bg-blue-500 px-4 text-white;
+  @apply h-10 rounded bg-blue-500 px-4 text-white active:animate-button-pop;
 }
 .btn.decrease {
   @apply bg-yellow-500;

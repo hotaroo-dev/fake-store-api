@@ -1,20 +1,22 @@
 <script setup lang="ts">
 import { onBeforeMount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useDebounceFn } from '@vueuse/core'
 import { useProductStore } from '@/stores/product'
 import Slider from '@vueform/slider'
 import Card from '@/components/Card.vue'
 
 const productStore = useProductStore()
 const inputRef = ref<HTMLInputElement>()
+const searchTerm = ref('')
 const router = useRouter()
 const route = useRoute()
-const min = route.query.min ? +route.query.min : 10
-const max = route.query.max ? +route.query.max : 500
+const min = route.query.min ? +route.query.min : 0
+const max = route.query.max ? +route.query.max : 1000
 const search = route.query.search ? route.query.search.toString() : ''
 
 onBeforeMount(() => {
-  productStore.searchTerm = search
+  searchTerm.value = search
   productStore.priceRange = [min, max]
   !productStore.categories.length && productStore.getCategories()
 })
@@ -24,26 +26,25 @@ onMounted(() => {
 })
 
 watch(
-  () => productStore.searchTerm,
-  (newTerm) => {
-    router.push({ query: { ...route.query, search: newTerm } })
-  }
-)
-
-watch(
   () => productStore.priceRange,
   ([min, max]) => {
     router.push({ query: { ...route.query, min, max } })
   }
 )
+
+watch(searchTerm, useDebounceFn(updateSearchQuery, 400))
+
+function updateSearchQuery(newTerm: string) {
+  router.push({ query: { ...route.query, search: newTerm } })
+}
 </script>
 
 <template>
-  <div class="sticky top-24 h-min">
+  <div class="top-24 h-min lg:sticky">
     <div class="flex w-full flex-col gap-6">
       <input
         ref="inputRef"
-        v-model="productStore.searchTerm"
+        v-model="searchTerm"
         placeholder="search..."
         type="text"
         class="mx-auto h-10 w-[calc(100%-8px)] rounded border border-zinc-200 px-4 shadow-sm outline outline-1 outline-offset-4 outline-zinc-200"

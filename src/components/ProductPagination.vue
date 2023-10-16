@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useProductStore, type IProduct } from '@/stores/product'
 import ProductCard from './ProductCard.vue'
@@ -10,36 +10,21 @@ import ArrowRightIcon from './icons/ArrowRightIcon.vue'
 const props = defineProps<{ products: IProduct[]; loading: boolean }>()
 
 const limit = 6
-const productStore = useProductStore()
-const filterdProducts = ref<IProduct[]>()
-const searchedProducts = ref<IProduct[]>()
 const route = useRoute()
-const pages = ref()
+const search = route.query.search ? route.query.search.toString() : ''
 const currentPage = +(route.query.page || 1)
 const offset = limit * (currentPage - 1)
 
-function filterByPrice(product: IProduct[], [min, max]: number[]) {
-  return product.filter(({ price }) => price >= min && price <= max)
-}
-
-watch(
-  [() => props.products, () => productStore.priceRange],
-  ([products, priceRange]) => {
-    filterdProducts.value = filterByPrice(products, priceRange)
-  },
-  { immediate: true }
+const productStore = useProductStore()
+const filterdProducts = computed(() =>
+  props.products.filter(
+    ({ price, title }) =>
+      price >= productStore.priceRange[0] &&
+      price <= productStore.priceRange[1] &&
+      title.toLowerCase().includes(search)
+  )
 )
-
-watch(
-  [filterdProducts, () => productStore.searchTerm],
-  ([products, newTerm]) => {
-    searchedProducts.value = products?.filter((product) =>
-      product.title.toLowerCase().includes(newTerm)
-    )
-    pages.value = searchedProducts.value && Math.ceil(searchedProducts.value.length / limit)
-  },
-  { immediate: true }
-)
+const pages = computed(() => Math.ceil(filterdProducts.value.length / limit))
 </script>
 
 <template>
@@ -48,9 +33,9 @@ watch(
       <SpinnerIcon />
     </div>
     <template v-else>
-      <div v-if="searchedProducts?.length">
+      <div v-if="filterdProducts?.length">
         <div class="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3">
-          <div v-for="product in searchedProducts.slice(offset, offset + limit)" :key="product.id">
+          <div v-for="product in filterdProducts.slice(offset, offset + limit)" :key="product.id">
             <ProductCard :product="product" />
           </div>
         </div>
@@ -67,7 +52,7 @@ watch(
               v-for="page in pages"
               :to="{ path: $route.path, query: { ...$route.query, page } }"
               :key="page"
-              class="active:animate-button-pop flex h-10 items-center justify-center rounded px-4 font-bold text-blue-800"
+              class="flex h-10 items-center justify-center rounded px-4 font-bold text-blue-800 active:animate-button-pop"
               :class="{ 'bg-blue-100': page === currentPage }"
             >
               <span>{{ page }}</span>
