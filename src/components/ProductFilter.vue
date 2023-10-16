@@ -28,14 +28,14 @@ onMounted(() => {
 watch(
   () => productStore.priceRange,
   ([min, max]) => {
-    router.push({ query: { ...route.query, min, max } })
+    router.push({ query: { ...route.query, min, max, page: 1 } })
   }
 )
 
 watch(searchTerm, useDebounceFn(updateSearchQuery, 400))
 
 function updateSearchQuery(newTerm: string) {
-  router.push({ query: { ...route.query, search: newTerm } })
+  router.push({ query: { ...route.query, search: newTerm, page: 1 } })
 }
 </script>
 
