@@ -12,7 +12,9 @@ const product = ref<IProduct>()
 const route = useRoute()
 
 onBeforeMount(async () => {
-  cartStore.isCartOpen = true
+  if (window.innerWidth > 1024) {
+    cartStore.isCartOpen = true
+  }
   product.value = await productStore.fetchProduct(route.params.productId)
   productStore.loading = false
 })

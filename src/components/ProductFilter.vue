@@ -47,7 +47,7 @@ function updateSearchQuery(newTerm: string) {
         v-model="searchTerm"
         placeholder="search..."
         type="text"
-        class="mx-auto h-10 w-[calc(100%-8px)] rounded border border-zinc-200 px-4 shadow-sm outline outline-1 outline-offset-4 outline-zinc-200"
+        class="mx-auto h-10 w-[calc(100%-8px)] rounded border border-zinc-200 px-4 shadow-sm ring-1 ring-zinc-200 ring-offset-4 focus:outline-none"
       />
       <Card>
         <template #header>Categories</template>

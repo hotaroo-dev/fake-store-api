@@ -9,7 +9,9 @@ const cartStore = useCartStore()
 const productStore = useProductStore()
 
 onBeforeMount(() => {
-  cartStore.isCartOpen = true
+  if (window.innerWidth > 1024) {
+    cartStore.isCartOpen = true
+  }
   !productStore.products.length && productStore.getProducts()
 })
 </script>
