@@ -3,7 +3,6 @@ import { onBeforeMount, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useDebounceFn } from '@vueuse/core'
 import { useProductStore } from '@/stores/product'
-import Slider from '@vueform/slider'
 import Card from '@/components/Card.vue'
 
 const productStore = useProductStore()
@@ -11,13 +10,13 @@ const inputRef = ref<HTMLInputElement>()
 const searchTerm = ref('')
 const router = useRouter()
 const route = useRoute()
-const min = route.query.min ? +route.query.min : 0
-const max = route.query.max ? +route.query.max : 1000
-const search = route.query.search ? route.query.search.toString() : ''
+const minQuery = route.query.min ? +route.query.min : 0
+const maxQuery = route.query.max ? +route.query.max : 1000
+const searchQuery = route.query.search ? route.query.search.toString() : ''
 
 onBeforeMount(() => {
-  searchTerm.value = search
-  productStore.priceRange = [min, max]
+  searchTerm.value = searchQuery
+  productStore.priceRange = [minQuery, maxQuery]
   !productStore.categories.length && productStore.getCategories()
 })
 
@@ -25,17 +24,18 @@ onMounted(() => {
   inputRef.value?.focus()
 })
 
-watch(
-  () => productStore.priceRange,
-  ([min, max]) => {
-    router.push({ query: { ...route.query, min, max, page: 1 } })
-  }
-)
+watch(() => productStore.priceRange, useDebounceFn(updatePriceRagne, 200))
 
-watch(searchTerm, useDebounceFn(updateSearchQuery, 400))
+watch(searchTerm, useDebounceFn(updateSearchQuery, 200))
 
 function updateSearchQuery(newTerm: string) {
+  if (newTerm === searchQuery) return
   router.push({ query: { ...route.query, search: newTerm, page: 1 } })
+}
+
+function updatePriceRagne([min, max]: number[]) {
+  if (min === minQuery && max === maxQuery) return
+  router.push({ query: { ...route.query, min, max, page: 1 } })
 }
 </script>
 
@@ -94,22 +94,16 @@ function updateSearchQuery(newTerm: string) {
           </div>
           <Slider
             v-model="productStore.priceRange"
-            class="slider-blue"
-            :tooltips="false"
+            range
             :min="0"
             :max="1000"
+            :pt="{
+              startHandler: 'border-none shadow-full',
+              endHandler: 'border-none shadow-full'
+            }"
           />
         </template>
       </Card>
     </div>
   </div>
 </template>
-
-<style src="@vueform/slider/themes/default.css"></style>
-<style scoped>
-.slider-blue {
-  --slider-connect-bg: #3b82f6;
-  --slider-tooltip-bg: #3b82f6;
-  --slider-handle-ring-color: #3b82f630;
-}
-</style>

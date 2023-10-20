@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { useProductStore, type IProduct } from '@/stores/product'
+import { type IProduct } from '@/stores/product'
 import ProductCard from './ProductCard.vue'
 import SpinnerIcon from './icons/SpinnerIcon.vue'
 import ArrowLeftIcon from './icons/ArrowLeftIcon.vue'
@@ -11,17 +11,16 @@ const props = defineProps<{ products: IProduct[]; loading: boolean }>()
 
 const limit = 6
 const route = useRoute()
-const search = route.query.search ? route.query.search.toString() : ''
 const currentPage = +(route.query.page || 1)
 const offset = limit * (currentPage - 1)
+const minQuery = route.query.min ? +route.query.min : 0
+const maxQuery = route.query.max ? +route.query.max : 1000
+const searchQuery = route.query.search ? route.query.search.toString() : ''
 
-const productStore = useProductStore()
 const filterdProducts = computed(() =>
   props.products.filter(
     ({ price, title }) =>
-      price >= productStore.priceRange[0] &&
-      price <= productStore.priceRange[1] &&
-      title.toLowerCase().includes(search)
+      price >= minQuery && price <= maxQuery && title.toLowerCase().includes(searchQuery)
   )
 )
 const pages = computed(() => Math.ceil(filterdProducts.value.length / limit))
@@ -29,7 +28,7 @@ const pages = computed(() => Math.ceil(filterdProducts.value.length / limit))
 
 <template>
   <div class="col-span-1 md:col-span-3">
-    <div v-if="loading" class="mt-20 flex justify-center text-blue-500">
+    <div v-if="loading" class="flex justify-center text-blue-500">
       <SpinnerIcon />
     </div>
     <template v-else>

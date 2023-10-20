@@ -1,13 +1,8 @@
 <script setup lang="ts">
-import { onBeforeMount } from 'vue'
 import { useCartStore } from '@/stores/cart'
 import ProductCard from '@/components/ProductCard.vue'
 
 const cartStore = useCartStore()
-
-onBeforeMount(() => {
-  cartStore.isCartOpen = true
-})
 </script>
 
 <template>
@@ -21,26 +16,21 @@ onBeforeMount(() => {
         <ProductCard :product="cartItem.product" :allow-quantity-change="false" />
         <div class="flex flex-row justify-between gap-4 lg:flex-col lg:items-start">
           <div class="flex items-center gap-4">
-            <button
-              class="h-10 rounded bg-blue-500 px-6 text-white active:translate-y-0.5"
-              @click="cartStore.addToCart(cartItem.product)"
-            >
-              +
-            </button>
+            <Button size="small" label="+" @click="cartStore.addToCart(cartItem.product)" />
             <span>{{ cartItem.count }}</span>
-            <button
-              class="h-10 rounded bg-yellow-500 px-6 active:translate-y-0.5"
+            <Button
+              size="small"
+              label="-"
+              severity="warning"
               @click="cartStore.decreaseItemQuantity(cartItem.product.id)"
-            >
-              -
-            </button>
+            />
           </div>
-          <button
-            class="h-10 rounded bg-red-500 px-7 text-white active:translate-y-0.5"
+          <Button
+            size="small"
+            label="Remove Item"
+            severity="danger"
             @click="cartStore.deleteCartItem(cartItem.product.id)"
-          >
-            Remove Item
-          </button>
+          />
         </div>
       </div>
     </div>

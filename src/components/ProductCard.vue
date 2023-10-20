@@ -25,17 +25,22 @@ const { addToCart, decreaseItemQuantity } = useCartStore()
         </p>
       </div>
       <div class="flex gap-6">
-        <button
-          class="btn mr-auto flex-1"
+        <Button
+          size="small"
+          label="Add to Cart"
+          class="mr-auto flex-1"
           :class="{ 'max-w-[16rem]': !allowQuantityChange }"
           @click="addToCart(product)"
-        >
-          Add to Cart
-        </button>
+        />
         <template v-if="allowQuantityChange">
           <div class="flex gap-3">
-            <button class="btn" @click="addToCart(product)">+</button>
-            <button class="btn decrease" @click="decreaseItemQuantity(product.id)">-</button>
+            <Button size="small" label="+" @click="addToCart(product)" />
+            <Button
+              size="small"
+              label="-"
+              severity="warning"
+              @click="decreaseItemQuantity(product.id)"
+            />
           </div>
         </template>
       </div>

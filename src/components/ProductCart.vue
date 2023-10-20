@@ -30,10 +30,10 @@ function onLeave(el: Element, done: () => void, height = 0) {
   <Transition name="slide-fade">
     <div
       v-if="cartStore.isCartOpen"
-      class="container pointer-events-none fixed top-16 flex h-min justify-end xl:top-24"
+      class="container pointer-events-none fixed right-0 top-16 z-10 flex h-min justify-end lg:right-auto xl:top-24"
     >
       <div
-        class="pointer-events-auto mr-8 w-full max-w-[22rem] rounded border border-zinc-200 bg-white"
+        class="pointer-events-auto w-full max-w-[22rem] rounded border border-zinc-200 bg-white lg:mr-8"
       >
         <div class="p-4">
           <h1 class="font-bold">Your Cart</h1>
@@ -77,12 +77,9 @@ function onLeave(el: Element, done: () => void, height = 0) {
             <span class="font-bold">${{ cartStore.totalPrice }}</span>
           </div>
           <div class="flex-1 px-4">
-            <RouterLink
-              class="block w-full rounded bg-blue-500 py-2 text-center text-white active:translate-y-0.5"
-              to="/shop"
-            >
-              Checkout
-            </RouterLink>
+            <Button size="small" class="w-full p-0" asChild>
+              <RouterLink to="/shop" class="h-full w-full py-2.5 font-bold">Checkout</RouterLink>
+            </Button>
           </div>
         </div>
       </div>

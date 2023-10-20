@@ -15,6 +15,9 @@ module.exports = {
       },
       animation: {
         'button-pop': 'button-pop 1s linear'
+      },
+      boxShadow: {
+        full: 'rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 4px 2px;'
       }
     },
     container: {
